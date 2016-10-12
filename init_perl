@@ -1,0 +1,1 @@
+export PERL5LIB=./lib:./t/lib:../crabcakes/lib
