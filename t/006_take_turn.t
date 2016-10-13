@@ -46,7 +46,7 @@ is($game->deck->size,($deck_size - 1), 'lost up a card');
 $res  = $test->request( POST '/play_card/1/3S', [ json => $game->to_json ] );
 $game = CrabCakes::Game->new(json => $res->content);
 
-my $player = $game->get_player_by_counter(1);
+$player = $game->get_player_by_counter(1);
 is($player->hand->size,4,'played up a card');
 is($game->discards->size,1, 'one on the discards pile');
 

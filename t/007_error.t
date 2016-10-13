@@ -11,6 +11,7 @@ use CrabCakes::Game;
 
 my $app = CrabCakes::Web::App->to_app;
 is( ref $app, 'CODE', 'Got app' );
+$DB::single=1;
 
 #setup
 
@@ -20,13 +21,23 @@ my $test_game = Test::CrabCakes::Web::Game->new();
 
 my $game = CrabCakes::Game->new(json => $test_game->new_game);
 
+
+#try draw when player not ready
+
 is($game->starting_player,'PlayersNotReady', 'nobody can start yet');
+my $res  = $test->request( POST '/draw_card/1', [ json => $game->to_json ] );
+is($res->code,400,"code 400 returned");
+is($res->message,"Bad Request","message something returned");
+$game = CrabCakes::Game->new(json => $res->content);
 
-my $res  = $test->request( POST '/error_generator', [ json => $game->to_json ] );
-#my $res  = $test->request( POST '/draw_card/1', [ json => $game->to_json ] );
-$DB::single=1;
+is($game->error_count(),1,"error count is one");
+isa_ok(ref($game->get_error(0)),'CrabCakes::Error::AllPlayersNotReady','got allplayersnotready error');
 
-#$game = CrabCakes::Game->new(json => $res->content);
+done_testing;
+exit;
+
+my $z;
+
 
 #my $player = $game->get_player_by_counter(1);
 #
