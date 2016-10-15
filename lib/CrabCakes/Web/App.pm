@@ -3,8 +3,10 @@ use Dancer2;
 use Dancer::Exception;
 
 use CrabCakes::Game;
+use Try::Tiny;
 use strict;
 
+set show_errors => 0;
 
 our $VERSION = '0.1';
 
@@ -36,7 +38,12 @@ post '/set_player_ready/:player' => sub {
 
 post '/draw_card/:player' => sub {
    my $game = var 'game';
+   #try {
    $game->take_turn(player_number => params->{player} );
+   #} catch {
+   #  $DB::single=1;
+   #  die $_->message();
+   #};
    return $game->to_json;
 };
 
@@ -71,14 +78,15 @@ post '/error_generator' => sub {
 # it should have and errors stack on the message too.
 
 hook init_error => sub {
-#$DB::single=1;
+$DB::single=1;
 my $error = shift;
 my $i;
 };
 
 
 hook before_error=> sub {
-   my $game = var 'game';
+$DB::single=1;
+my $game = var 'game';
 my $error = shift;
 my $b;
 };
@@ -88,7 +96,6 @@ hook after_error=> sub {
    my $game = var 'game';
    my $response = shift;
    if ( $game->error_count ) {
-$DB::single=1;
      $response->content($game->to_json); 
      $response->status(400);
    }  
@@ -96,9 +103,9 @@ $DB::single=1;
 
 
 hook on_route_exception=> sub {
-#$DB::single=1;
-my ($app,$error) = @_;
-my $o;
+   $DB::single=1;
+   my ($app,$error) = @_;
+   my $o;
 };
 
 #404 handler

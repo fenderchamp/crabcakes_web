@@ -5,5 +5,5 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 
-use CrabCakes::App;
-CrabCakes::App->to_app;
+use CrabCakes::Web::App;
+CrabCakes::Web::App->to_app;
