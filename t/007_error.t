@@ -28,6 +28,7 @@ is($game->starting_player,'PlayersNotReady', 'nobody can start yet');
 my $res  = $test->request( POST '/draw_card/1', [ json => $game->to_json ] );
 is($res->code,400,"code 400 returned");
 is($res->message,"Bad Request","message something returned");
+
 $game = CrabCakes::Game->new(json => $res->content);
 
 is($game->error_count(),1,"error count is one");

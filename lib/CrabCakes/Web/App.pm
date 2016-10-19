@@ -78,17 +78,13 @@ post '/error_generator' => sub {
 # it should have and errors stack on the message too.
 
 hook init_error => sub {
-$DB::single=1;
 my $error = shift;
-my $i;
 };
 
 
 hook before_error=> sub {
-$DB::single=1;
 my $game = var 'game';
 my $error = shift;
-my $b;
 };
 
 
@@ -103,7 +99,6 @@ hook after_error=> sub {
 
 
 hook on_route_exception=> sub {
-   $DB::single=1;
    my ($app,$error) = @_;
    my $o;
 };
@@ -111,14 +106,19 @@ hook on_route_exception=> sub {
 #404 handler
 any qr{.*} => sub {
     status 'not_found';
-    return '{ Error => "Page Not Found" }'; 
+    return '{ Error : "Page Not Found" }'; 
 };
-
 
 #store the json into a game object when we have it
 hook before => sub {
   my $route = shift;
   var (game => CrabCakes::Game->new( json => params->{json} )) if ( params->{json} );
+};
+
+hook after => sub {
+  my $response = shift;
+  #$response->content_type('text/json; charset=UTF=8');
+  $response->content_type('application/json; charset=UTF-8');
 };
 
 
